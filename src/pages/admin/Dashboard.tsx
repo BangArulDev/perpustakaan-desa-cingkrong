@@ -1,31 +1,51 @@
-import { Book, Users, Clock, AlertCircle } from "lucide-react";
+import { Book, Users, Clock, AlertCircle, Layers } from "lucide-react";
+import { useData } from "../../context/DataContext";
 
 export default function Dashboard() {
+  const { books, members, loans, returnBook } = useData();
+
+  // Realtime Stats
+  const totalBooks = books.reduce((sum, b) => sum + b.stock, 0);
+  const activeMembers = members.filter((m) => m.status === "active").length;
+  // Calculate based on active loans (borrowed or overdue)
+  const borrowedBooks = loans.filter(
+    (l) => l.status === "borrowed" || l.status === "overdue"
+  ).length;
+  const overdueBooks = loans.filter((l) => l.status === "overdue").length;
+
+  // Stats Configuration
   const stats = [
     {
-      label: "Total Buku",
-      value: "1,240",
+      label: "Total Judul",
+      value: books.length.toLocaleString(),
       icon: Book,
       color: "bg-primary-light",
       textColor: "text-primary-dark",
     },
     {
+      label: "Total Eksemplar",
+      value: totalBooks.toLocaleString(),
+      icon: Layers,
+      color: "bg-emerald-100",
+      textColor: "text-emerald-800",
+    },
+    {
       label: "Anggota Aktif",
-      value: "584",
+      value: activeMembers.toLocaleString(),
       icon: Users,
       color: "bg-blue-100",
       textColor: "text-blue-800",
     },
     {
       label: "Buku Dipinjam",
-      value: "86",
+      value: borrowedBooks.toString(),
       icon: Clock,
       color: "bg-secondary/20",
       textColor: "text-secondary",
     },
     {
       label: "Jatuh Tempo",
-      value: "12",
+      value: overdueBooks.toString(),
       icon: AlertCircle,
       color: "bg-red-100",
       textColor: "text-red-800",
@@ -47,7 +67,7 @@ export default function Dashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         {stats.map((stat) => (
           <div
             key={stat.label}
@@ -68,7 +88,7 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Recent Activity Mockup */}
+      {/* Recent Activity Mockup -> Realtime Loans */}
       <div className="bg-white rounded-xl shadow-sm border border-stone-100 p-6">
         <h3 className="font-bold text-lg text-primary-dark mb-4">
           Peminjaman Terbaru
@@ -81,26 +101,68 @@ export default function Dashboard() {
                 <th className="pb-3 font-medium">Buku</th>
                 <th className="pb-3 font-medium">Tanggal Pinjam</th>
                 <th className="pb-3 font-medium">Status</th>
+                <th className="pb-3 font-medium">Aksi</th>
               </tr>
             </thead>
             <tbody className="text-sm text-text-primary">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <tr
-                  key={i}
-                  className="border-b border-stone-100 last:border-0 hover:bg-stone-50"
-                >
-                  <td className="py-4 font-medium">Budi Santoso</td>
-                  <td className="py-4 text-text-secondary">
-                    Laskar Pelangi {i}
-                  </td>
-                  <td className="py-4">12 Jan 2024</td>
-                  <td className="py-4">
-                    <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-semibold">
-                      Dipinjam
-                    </span>
-                  </td>
-                </tr>
-              ))}
+              {loans.map((loan) => {
+                const member = members.find((m) => m.id === loan.memberId);
+                const book = books.find((b) => b.id === loan.bookId);
+
+                return (
+                  <tr
+                    key={loan.id}
+                    className="border-b border-stone-100 last:border-0 hover:bg-stone-50"
+                  >
+                    <td className="py-4 font-medium">
+                      {member ? member.name : "Unknown Member"}
+                    </td>
+                    <td className="py-4 text-text-secondary">
+                      {book ? book.title : "Unknown Book"}
+                    </td>
+                    <td className="py-4">
+                      {new Date(loan.loanDate).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </td>
+                    <td className="py-4">
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-semibold capitalize ${
+                          loan.status === "borrowed"
+                            ? "bg-blue-100 text-blue-700"
+                            : loan.status === "returned"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        {loan.status === "borrowed"
+                          ? "Dipinjam"
+                          : loan.status === "returned"
+                          ? "Dikembalikan"
+                          : "Terlambat"}
+                      </span>
+                    </td>
+                    <td className="py-4">
+                      {loan.status !== "returned" && (
+                        <button
+                          onClick={() => {
+                            if (
+                              confirm("Apakah buku ini sudah dikembalikan?")
+                            ) {
+                              returnBook(loan.id, loan.bookId);
+                            }
+                          }}
+                          className="bg-primary hover:bg-primary-dark text-white px-3 py-1 rounded text-xs transition"
+                        >
+                          Kembalikan
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

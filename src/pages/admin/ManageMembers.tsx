@@ -6,51 +6,17 @@ import {
   MoreVertical,
   Shield,
 } from "lucide-react";
-
-// Mock Data
-const INITIAL_MEMBERS = [
-  {
-    id: 1,
-    name: "Budi Santoso",
-    email: "budi.santoso@email.com",
-    role: "Warga",
-    status: "active",
-    joinDate: "2024-01-15",
-  },
-  {
-    id: 2,
-    name: "Siti Aminah",
-    email: "siti.aminah@email.com",
-    role: "Mahasiswa",
-    status: "pending",
-    joinDate: "2024-03-10",
-  },
-  {
-    id: 3,
-    name: "Ahmad Rizky",
-    email: "ahmad.rizky@email.com",
-    role: "Pelajar",
-    status: "active",
-    joinDate: "2024-02-22",
-  },
-  {
-    id: 4,
-    name: "Dewi Lestari",
-    email: "dewi.lestari@email.com",
-    role: "Warga",
-    status: "blocked",
-    joinDate: "2023-12-05",
-  },
-];
+import { useData } from "../../context/DataContext";
 
 export default function ManageMembers() {
-  const [members, setMembers] = useState(INITIAL_MEMBERS);
+  const { members, updateMemberStatus } = useData();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleStatusChange = (id: number, newStatus: string) => {
-    setMembers(
-      members.map((m) => (m.id === id ? { ...m, status: newStatus } : m))
-    );
+  const handleStatusChange = (
+    id: number,
+    newStatus: "active" | "pending" | "blocked"
+  ) => {
+    updateMemberStatus(id, newStatus);
   };
 
   const filteredMembers = members.filter(

@@ -1,80 +1,7 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Search, Filter } from "lucide-react";
-
-const MOCK_BOOKS = [
-  {
-    id: 1,
-    title: "Teknologi Tepat Guna Pertanian",
-    author: "Dr. Ir. Suharso",
-    category: "Pertanian",
-    cover:
-      "https://images.unsplash.com/photo-1592496001020-d31bd830651f?auto=format&fit=crop&w=800&q=80",
-    available: true,
-  },
-  {
-    id: 2,
-    title: "Laskar Pelangi",
-    author: "Andrea Hirata",
-    category: "Fiksi",
-    cover:
-      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=800&q=80",
-    available: false,
-  },
-  {
-    id: 3,
-    title: "Panduan Belajar Coding untuk Pemula",
-    author: "John Doe",
-    category: "Teknologi",
-    cover:
-      "https://images.unsplash.com/photo-1587620962725-abab7fe55159?auto=format&fit=crop&w=800&q=80",
-    available: true,
-  },
-  {
-    id: 4,
-    title: "Sejarah Islam di Jawa",
-    author: "Prof. Hasan",
-    category: "Agama",
-    cover:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=800&q=80",
-    available: true,
-  },
-  {
-    id: 5,
-    title: "Budidaya Lele Sangkuriang",
-    author: "Tim Agromedia",
-    category: "Pertanian",
-    cover:
-      "https://images.unsplash.com/photo-1535905557558-afc4877a26fc?auto=format&fit=crop&w=800&q=80",
-    available: true,
-  },
-  {
-    id: 6,
-    title: "Dongeng Kancil dan Buaya",
-    author: "Cerita Rakyat",
-    category: "Anak",
-    cover:
-      "https://images.unsplash.com/photo-1519682337058-a5ca054c481e?auto=format&fit=crop&w=800&q=80",
-    available: true,
-  },
-  {
-    id: 7,
-    title: "Resep Masakan Nusantara",
-    author: "Chef Juna",
-    category: "Umum",
-    cover:
-      "https://images.unsplash.com/photo-1495521841654-92427f411bd1?auto=format&fit=crop&w=800&q=80",
-    available: true,
-  },
-  {
-    id: 8,
-    title: "Ensiklopedi Sains",
-    author: "National Geographic",
-    category: "Pendidikan",
-    cover:
-      "https://images.unsplash.com/photo-1532012197267-da84d127e765?auto=format&fit=crop&w=800&q=80",
-    available: true,
-  },
-];
+import { useData } from "../context/DataContext";
 
 const CATEGORIES = [
   "Semua",
@@ -87,10 +14,25 @@ const CATEGORIES = [
 ];
 
 export default function Catalog() {
+  const navigate = useNavigate();
+  const { books, borrowBook } = useData();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua");
 
-  const filteredBooks = MOCK_BOOKS.filter((book) => {
+  const handleBorrow = (bookId: number) => {
+    const session = localStorage.getItem("userSession");
+    if (!session) {
+      alert("Silakan login terlebih dahulu untuk meminjam buku.");
+      navigate("/login");
+      return;
+    }
+
+    const user = JSON.parse(session);
+    borrowBook(bookId, user.id);
+    alert("Buku berhasil dipinjam! Cek riwayat peminjaman di profil Anda.");
+  };
+
+  const filteredBooks = books.filter((book) => {
     const matchesSearch =
       book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       book.author.toLowerCase().includes(searchTerm.toLowerCase());
@@ -160,10 +102,10 @@ export default function Catalog() {
               <div className="absolute top-2 right-2">
                 <span
                   className={`px-3 py-1 rounded text-xs font-semibold text-white shadow-sm ${
-                    book.available ? "bg-primary" : "bg-stone-500"
+                    book.stock > 0 ? "bg-primary" : "bg-stone-500"
                   }`}
                 >
-                  {book.available ? "Tersedia" : "Dipinjam"}
+                  {book.stock > 0 ? "Tersedia" : "Dipinjam"}
                 </span>
               </div>
             </div>
@@ -177,9 +119,25 @@ export default function Catalog() {
               <p className="text-sm text-text-secondary mb-4 flex-grow">
                 {book.author}
               </p>
-              <button className="w-full py-2.5 bg-accent text-secondary font-bold rounded shadow-sm hover:bg-accent-dark transition-colors duration-200">
-                Lihat Detail
-              </button>
+              <div className="flex gap-2">
+                <Link
+                  to={`/book/${book.id}`}
+                  className="flex-1 text-center py-2 bg-stone-100 text-stone-700 font-bold rounded shadow-sm hover:bg-stone-200 transition-colors duration-200"
+                >
+                  Detail
+                </Link>
+                <button
+                  onClick={() => handleBorrow(book.id)}
+                  disabled={book.stock <= 0}
+                  className={`flex-1 py-2 font-bold rounded shadow-sm transition-colors duration-200 ${
+                    book.stock > 0
+                      ? "bg-accent text-secondary hover:bg-accent-dark"
+                      : "bg-stone-300 text-stone-500 cursor-not-allowed"
+                  }`}
+                >
+                  {book.stock > 0 ? "Pinjam" : "Habis"}
+                </button>
+              </div>
             </div>
           </div>
         ))}

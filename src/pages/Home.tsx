@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export default function Home() {
+  const userSession = JSON.parse(localStorage.getItem("userSession") || "null");
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -35,13 +37,23 @@ export default function Home() {
                 Cari Buku
                 <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition" />
               </Link>
-              <Link
-                to="/daftar"
-                className="inline-flex items-center justify-center px-8 py-3 bg-transparent border-2 border-white hover:bg-white/10 text-white font-semibold rounded-lg transition duration-300"
-              >
-                <Users className="mr-2 h-5 w-5" />
-                Daftar Anggota
-              </Link>
+              {userSession ? (
+                <Link
+                  to="/profile"
+                  className="inline-flex items-center justify-center px-8 py-3 bg-transparent border-2 border-white hover:bg-white/10 text-white font-semibold rounded-lg transition duration-300"
+                >
+                  <Users className="mr-2 h-5 w-5" />
+                  Lihat Profil
+                </Link>
+              ) : (
+                <Link
+                  to="/daftar"
+                  className="inline-flex items-center justify-center px-8 py-3 bg-transparent border-2 border-white hover:bg-white/10 text-white font-semibold rounded-lg transition duration-300"
+                >
+                  <Users className="mr-2 h-5 w-5" />
+                  Daftar Anggota
+                </Link>
+              )}
             </div>
           </motion.div>
         </div>
@@ -156,12 +168,21 @@ export default function Home() {
             Bergabunglah menjadi anggota sekarang gratis dan nikmati akses ke
             ribuan koleksi buku kami.
           </p>
-          <Link
-            to="/daftar"
-            className="inline-block px-10 py-4 bg-secondary hover:bg-secondary-light text-white font-bold rounded-full shadow-lg transition duration-300 transform hover:scale-105"
-          >
-            Daftar Anggota Sekarang
-          </Link>
+          {userSession ? (
+            <Link
+              to="/katalog"
+              className="inline-block px-10 py-4 bg-secondary hover:bg-secondary-light text-white font-bold rounded-full shadow-lg transition duration-300 transform hover:scale-105"
+            >
+              Jelajahi Koleksi Buku
+            </Link>
+          ) : (
+            <Link
+              to="/daftar"
+              className="inline-block px-10 py-4 bg-secondary hover:bg-secondary-light text-white font-bold rounded-full shadow-lg transition duration-300 transform hover:scale-105"
+            >
+              Daftar Anggota Sekarang
+            </Link>
+          )}
         </div>
       </section>
     </div>

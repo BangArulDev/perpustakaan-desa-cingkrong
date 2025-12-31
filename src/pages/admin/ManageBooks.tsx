@@ -1,32 +1,9 @@
 import { useState } from "react";
 import { Plus, Search, Edit, Trash2 } from "lucide-react";
-
-const INITIAL_BOOKS = [
-  {
-    id: 1,
-    title: "Teknologi Tepat Guna",
-    author: "Dr. Ir. Suharso",
-    category: "Pertanian",
-    stock: 5,
-  },
-  {
-    id: 2,
-    title: "Laskar Pelangi",
-    author: "Andrea Hirata",
-    category: "Fiksi",
-    stock: 3,
-  },
-  {
-    id: 3,
-    title: "Sejarah Islam",
-    author: "Prof. Hasan",
-    category: "Agama",
-    stock: 8,
-  },
-];
+import { useData } from "../../context/DataContext";
 
 export default function ManageBooks() {
-  const [books, setBooks] = useState(INITIAL_BOOKS);
+  const { books, addBook, deleteBook } = useData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newBook, setNewBook] = useState({
     title: "",
@@ -37,17 +14,19 @@ export default function ManageBooks() {
 
   const handleAddBook = (e: React.FormEvent) => {
     e.preventDefault();
-    setBooks([
-      ...books,
-      { id: Date.now(), ...newBook, stock: Number(newBook.stock) },
-    ]);
+    addBook({
+      ...newBook,
+      stock: Number(newBook.stock),
+      cover:
+        "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=800&q=80", // Default cover
+    });
     setIsModalOpen(false);
     setNewBook({ title: "", author: "", category: "", stock: 1 });
   };
 
   const handleDelete = (id: number) => {
     if (confirm("Yakin ingin menghapus buku ini?")) {
-      setBooks(books.filter((b) => b.id !== id));
+      deleteBook(id);
     }
   };
 

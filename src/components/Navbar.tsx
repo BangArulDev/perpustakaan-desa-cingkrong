@@ -37,18 +37,31 @@ export default function Navbar() {
             >
               Katalog Buku
             </Link>
-            <Link
-              to="/daftar"
-              className="hover:text-accent transition duration-200"
-            >
-              Daftar Anggota
-            </Link>
+            {userSession && (
+              <Link
+                to="/profile"
+                className="hover:text-accent transition duration-200"
+              >
+                Profil
+              </Link>
+            )}
+            {!userSession && (
+              <Link
+                to="/daftar"
+                className="hover:text-accent transition duration-200"
+              >
+                Daftar Anggota
+              </Link>
+            )}
 
             {userSession ? (
               <div className="flex items-center space-x-4 pl-4 border-l border-white/20">
-                <span className="text-accent text-sm">
+                <Link
+                  to="/profile"
+                  className="text-accent text-sm hover:text-white transition font-medium flex items-center gap-2"
+                >
                   Hai, {userSession.name}
-                </span>
+                </Link>
                 {userSession.role === "admin" && (
                   <Link
                     to="/admin"
@@ -108,13 +121,24 @@ export default function Navbar() {
             >
               Katalog Buku
             </Link>
-            <Link
-              to="/daftar"
-              className="block py-2 hover:text-secondary-light"
-              onClick={() => setIsOpen(false)}
-            >
-              Daftar Anggota
-            </Link>
+            {userSession && (
+              <Link
+                to="/profile"
+                className="block py-2 hover:text-secondary-light border-b border-primary-light"
+                onClick={() => setIsOpen(false)}
+              >
+                Profil Saya
+              </Link>
+            )}
+            {!userSession && (
+              <Link
+                to="/daftar"
+                className="block py-2 hover:text-secondary-light"
+                onClick={() => setIsOpen(false)}
+              >
+                Daftar Anggota
+              </Link>
+            )}
           </div>
         </div>
       )}

@@ -1,31 +1,74 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Lock, User } from "lucide-react";
+import { useData } from "../context/DataContext";
+import { supabase } from "../lib/supabase";
 
 export default function Login() {
+  const { members } = useData();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === "admin" && password === "admin123") {
-      localStorage.setItem(
-        "userSession",
-        JSON.stringify({ role: "admin", name: "Administrator" })
-      );
-      // Keep legacy for ProtectedRoute compatibility until refactored
-      localStorage.setItem("isAdmin", "true");
-      navigate("/admin/dashboard");
-    } else if (username === "user" && password === "user123") {
-      localStorage.setItem(
-        "userSession",
-        JSON.stringify({ role: "member", name: "Budi Santoso" })
-      );
-      navigate("/");
-    } else {
-      setError("Username atau password salah!");
+    setError("");
+
+    try {
+      console.log("Attempting Login:", { email: username.trim(), password });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: username.trim(),
+        password: password,
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        // Get Profile to check role
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", data.user.id)
+          .single();
+
+        if (profileError) {
+          // If no profile, fallback/create or just login as member
+          console.error("Profile missing:", profileError);
+        }
+
+        const userRole = profile?.role || "member";
+        const userName = profile?.name || data.user.email;
+
+        localStorage.setItem(
+          "userSession",
+          JSON.stringify({
+            role: userRole,
+            name: userName,
+            id: data.user.id,
+            email: data.user.email,
+            joinDate:
+              profile?.join_date || new Date().toISOString().split("T")[0],
+          })
+        );
+
+        if (userRole === "admin") {
+          localStorage.setItem("isAdmin", "true");
+          navigate("/admin/dashboard");
+        } else {
+          if (profile?.status === "blocked") {
+            throw new Error("Akun Anda diblokir. Hubungi admin.");
+          }
+          navigate("/profile");
+        }
+      }
+    } catch (err: any) {
+      console.error("Login Error:", err);
+      let msg = err.message || "Login gagal.";
+      if (msg.includes("Invalid login credentials")) {
+        msg = "Email atau Password salah. (Atau email belum dikonfirmasi)";
+      }
+      setError(msg);
     }
   };
 
@@ -49,7 +92,7 @@ export default function Login() {
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-text-secondary mb-1">
-                Username
+                Email
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 h-5 w-5" />
@@ -58,7 +101,7 @@ export default function Login() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 border border-stone-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="Masukkan username"
+                  placeholder="Masukkan email"
                 />
               </div>
             </div>
@@ -86,11 +129,19 @@ export default function Login() {
           >
             Masuk
           </button>
+
+          <div className="text-center mt-6">
+            <p className="text-text-secondary text-sm">
+              Belum punya akun?{" "}
+              <Link
+                to="/daftar"
+                className="text-primary font-bold hover:underline"
+              >
+                Daftar disini
+              </Link>
+            </p>
+          </div>
         </form>
-        <div className="px-8 pb-8 text-center text-sm text-stone-400 space-y-1">
-          <p>Admin: admin / admin123</p>
-          <p>User: user / user123</p>
-        </div>
       </div>
     </div>
   );
