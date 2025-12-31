@@ -11,8 +11,19 @@ export default function Login() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (username === "admin" && password === "admin123") {
+      localStorage.setItem(
+        "userSession",
+        JSON.stringify({ role: "admin", name: "Administrator" })
+      );
+      // Keep legacy for ProtectedRoute compatibility until refactored
       localStorage.setItem("isAdmin", "true");
       navigate("/admin/dashboard");
+    } else if (username === "user" && password === "user123") {
+      localStorage.setItem(
+        "userSession",
+        JSON.stringify({ role: "member", name: "Budi Santoso" })
+      );
+      navigate("/");
     } else {
       setError("Username atau password salah!");
     }
@@ -25,7 +36,7 @@ export default function Login() {
           <h2 className="text-2xl font-bold font-serif text-white mb-2">
             Perpustakaan Desa
           </h2>
-          <p className="text-secondary-light">Masuk ke Panel Admin</p>
+          <p className="text-secondary-light">Masuk ke Akun Anda</p>
         </div>
 
         <form onSubmit={handleLogin} className="p-8 space-y-6">
@@ -76,8 +87,9 @@ export default function Login() {
             Masuk
           </button>
         </form>
-        <div className="px-8 pb-8 text-center text-sm text-stone-400">
-          <p>Gunakan: admin / admin123</p>
+        <div className="px-8 pb-8 text-center text-sm text-stone-400 space-y-1">
+          <p>Admin: admin / admin123</p>
+          <p>User: user / user123</p>
         </div>
       </div>
     </div>

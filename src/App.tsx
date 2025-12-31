@@ -14,6 +14,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/admin/Dashboard";
 import ManageBooks from "./pages/admin/ManageBooks";
 import ManageMembers from "./pages/admin/ManageMembers";
+import Settings from "./pages/admin/Settings";
 
 function App() {
   return (
@@ -36,10 +37,7 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="books" element={<ManageBooks />} />
             <Route path="members" element={<ManageMembers />} />
-            <Route
-              path="settings"
-              element={<div className="p-6">Pengaturan (Segera Hadir)</div>}
-            />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Route>
       </Routes>
