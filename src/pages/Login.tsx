@@ -1,22 +1,24 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Lock, User } from "lucide-react";
+import { Lock, Mail, ArrowRight, Info, AlertCircle, KeyRound } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { supabase } from "../lib/supabase";
+import { motion } from "framer-motion";
 
 export default function Login() {
   const { members } = useData();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
-      console.log("Attempting Login:", { email: username.trim(), password });
       const { data, error } = await supabase.auth.signInWithPassword({
         email: username.trim(),
         password: password,
@@ -25,17 +27,13 @@ export default function Login() {
       if (error) throw error;
 
       if (data.user) {
-        // Get Profile to check role
         const { data: profile, error: profileError } = await supabase
           .from("profiles")
           .select("*")
           .eq("id", data.user.id)
           .single();
 
-        if (profileError) {
-          // If no profile, fallback/create or just login as member
-          console.error("Profile missing:", profileError);
-        }
+        if (profileError) console.error("Profile missing:", profileError);
 
         const userRole = profile?.role || "member";
         const userName = profile?.name || data.user.email;
@@ -47,8 +45,7 @@ export default function Login() {
             name: userName,
             id: data.user.id,
             email: data.user.email,
-            joinDate:
-              profile?.join_date || new Date().toISOString().split("T")[0],
+            joinDate: profile?.join_date || new Date().toISOString().split("T")[0],
           })
         );
 
@@ -63,86 +60,121 @@ export default function Login() {
         }
       }
     } catch (err: any) {
-      console.error("Login Error:", err);
       let msg = err.message || "Login gagal.";
       if (msg.includes("Invalid login credentials")) {
-        msg = "Email atau Password salah. (Atau email belum dikonfirmasi)";
+        msg = "Email atau Password salah.";
       }
       setError(msg);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const inputClass = "w-full pl-12 pr-4 py-3 bg-background border border-white/10 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-white placeholder:text-stone-500";
+
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-xl overflow-hidden border border-stone-100">
-        <div className="bg-secondary p-8 text-center">
-          <h2 className="text-2xl font-bold font-serif text-white mb-2">
-            Perpustakaan Desa
-          </h2>
-          <p className="text-secondary-light">Masuk ke Akun Anda</p>
+    <div className="min-h-screen bg-background flex items-center justify-center px-6 relative overflow-hidden">
+      {/* Background Decorative Blurs */}
+      <div className="absolute top-1/4 -left-20 w-80 h-80 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-accent/5 blur-[120px] rounded-full pointer-events-none" />
+
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="max-w-md w-full"
+      >
+        {/* Logo/Header Area */}
+        <div className="text-center mb-8">
+          <Link to="/" className="inline-flex items-center gap-2 mb-6 group">
+            <div className="bg-primary p-2 rounded-lg group-hover:rotate-12 transition-transform">
+              <KeyRound className="text-white h-6 w-6" />
+            </div>
+            <span className="font-serif font-bold text-2xl text-white">Desa<span className="text-primary-light">Cingkrong</span></span>
+          </Link>
+          <h2 className="text-3xl font-bold text-white mb-2">Selamat Datang</h2>
+          <p className="text-stone-400">Masuk untuk mengelola pinjaman buku Anda</p>
         </div>
 
-        <form onSubmit={handleLogin} className="p-8 space-y-6">
-          {error && (
-            <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center font-medium border border-red-100">
-              {error}
-            </div>
-          )}
+        <div className="bg-surface border border-white/10 p-8 rounded-[2rem] shadow-2xl relative">
+          <form onSubmit={handleLogin} className="space-y-6">
+            {error && (
+              <motion.div 
+                initial={{ x: -10 }} 
+                animate={{ x: 0 }}
+                className="bg-accent/10 border border-accent/20 text-accent-light p-4 rounded-xl text-sm flex items-start gap-3"
+              >
+                <AlertCircle className="shrink-0 mt-0.5" size={18} />
+                <span>{error}</span>
+              </motion.div>
+            )}
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1">
-                Email
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold uppercase tracking-widest text-zinc-200 ml-1">
+                Alamat Email
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 h-5 w-5" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-light h-5 w-5" />
                 <input
-                  type="text"
+                  type="email"
+                  required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-stone-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="Masukkan email"
+                  className={inputClass}
+                  placeholder="nama@email.com"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-text-secondary mb-1">
-                Password
-              </label>
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <label className="text-xs font-bold uppercase tracking-widest text-zinc-200 ml-1">
+                  Kata Sandi
+                </label>
+                <Link to="/reset-password" className="text-[10px] font-bold text-primary-light hover:underline uppercase tracking-wider">
+                  Lupa Sandi?
+                </Link>
+              </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 h-5 w-5" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-light h-5 w-5" />
                 <input
                   type="password"
+                  required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-stone-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="Masukkan password"
+                  className={inputClass}
+                  placeholder="••••••••"
                 />
               </div>
             </div>
-          </div>
 
-          <button
-            type="submit"
-            className="w-full py-3 bg-primary hover:bg-primary-dark text-white font-bold rounded-lg transition duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            Masuk
-          </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-full py-4 bg-primary hover:bg-primary-dark text-white font-black rounded-xl shadow-xl shadow-primary/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 group ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            >
+              {isLoading ? "Memproses..." : "Masuk ke Akun"}
+              {!isLoading && <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />}
+            </button>
+          </form>
 
-          <div className="text-center mt-6">
-            <p className="text-text-secondary text-sm">
-              Belum punya akun?{" "}
+          <div className="mt-8 pt-8 border-t border-white/5 flex flex-col items-center gap-4">
+            <p className="text-stone-400 text-sm">
+              Belum memiliki akun?{" "}
               <Link
                 to="/daftar"
-                className="text-primary font-bold hover:underline"
+                className="text-primary-light font-bold hover:underline"
               >
-                Daftar disini
+                Daftar Gratis
               </Link>
             </p>
+            
+            <div className="flex items-center gap-2 text-[11px] text-stone-500 bg-background/50 px-3 py-1 rounded-full border border-white/5">
+              <Info size={12} />
+              <span>Gunakan akun terdaftar di Desa Cingkrong</span>
+            </div>
           </div>
-        </form>
-      </div>
+        </div>
+      </motion.div>
     </div>
   );
 }

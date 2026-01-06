@@ -30,10 +30,10 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/katalog" element={<Catalog />} />
             <Route path="/book/:id" element={<BookDetail />} />
-            <Route path="/daftar" element={<Register />} />
             <Route path="/profile" element={<UserDashboard />} />
           </Route>
           {/* Auth Route */}
+          <Route path="/daftar" element={<Register />} />
           <Route path="/login" element={<Login />} />
           {/* Protected Admin Routes */}
           <Route element={<ProtectedRoute />}>

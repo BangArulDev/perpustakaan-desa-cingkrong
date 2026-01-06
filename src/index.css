@@ -14,6 +14,6 @@
   h4,
   h5,
   h6 {
-    @apply font-serif text-text-primary;
+    @apply font-serif text-zinc-200;
   }
 }
