@@ -43,22 +43,23 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Hours Section */}
+          {/* Hours Section - Perbaikan Nama Hari Lengkap */}
           <div className="md:col-span-3 space-y-6">
             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Waktu Layanan</h4>
             <ul className="space-y-3">
-              <li className="flex justify-between items-center text-sm border-b border-slate-50 pb-2">
-                <span className="text-slate-500 font-medium">Sen - Kam</span>
-                <span className="text-slate-800 font-bold tracking-tight">08:00 — 16:00</span>
-              </li>
-              <li className="flex justify-between items-center text-sm border-b border-slate-50 pb-2">
-                <span className="text-slate-500 font-medium">Jumat</span>
-                <span className="text-slate-800 font-bold tracking-tight">08:00 — 11:00</span>
-              </li>
-              <li className="flex justify-between items-center text-sm border-b border-slate-50 pb-2">
-                <span className="text-slate-500 font-medium">Sabtu</span>
-                <span className="text-slate-800 font-bold tracking-tight">08:00 — 13:00</span>
-              </li>
+              {[
+                { hari: "Senin", jam: "08:00 — 16:00" },
+                { hari: "Selasa", jam: "08:00 — 16:00" },
+                { hari: "Rabu", jam: "08:00 — 16:00" },
+                { hari: "Kamis", jam: "08:00 — 16:00" },
+                { hari: "Jumat", jam: "08:00 — 11:00" },
+                { hari: "Sabtu", jam: "08:00 — 13:00" },
+              ].map((item) => (
+                <li key={item.hari} className="flex justify-between items-center text-sm border-b border-slate-50 pb-2">
+                  <span className="text-slate-500 font-medium">{item.hari}</span>
+                  <span className="text-slate-800 font-bold tracking-tight">{item.jam}</span>
+                </li>
+              ))}
               <li className="flex justify-between items-center text-sm pt-1">
                 <span className="text-slate-400 font-medium italic">Minggu</span>
                 <span className="text-accent font-black text-[10px] uppercase tracking-widest">Tutup</span>
