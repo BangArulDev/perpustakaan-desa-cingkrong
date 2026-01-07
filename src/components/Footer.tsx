@@ -1,67 +1,82 @@
-import { MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail, BookOpen } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-secondary-dark text-stone-300 py-10 mt-auto">
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div>
-          <h3 className="text-xl font-bold font-serif text-white mb-4">
-            Perpustakaan Desa Cingkrong
-          </h3>
-          <p className="text-sm leading-relaxed">
-            Membangun masyarakat yang cerdas dan berwawasan luas melalui akses
-            literasi yang mudah dan berkualitas.
-          </p>
-        </div>
-
-        <div>
-          <h4 className="text-lg font-bold text-white mb-4">Kontak Kami</h4>
-          <ul className="space-y-3">
-            <li className="flex items-start space-x-3">
-              <MapPin className="h-5 w-5 text-primary-light mt-1 flex-shrink-0" />
-              <span>
-                Jl. Raya Purvodadi - Solo KM 5, Desa Cingkrong, Kec. Purvodadi,
-                Kab. Grobogan
+    <footer className="bg-white border-t border-slate-100 pt-20 pb-10 mt-auto">
+      <div className="container mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-24">
+          
+          {/* Brand Section */}
+          <div className="md:col-span-5 space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary p-1.5 rounded-lg">
+                <BookOpen className="h-4 w-4 text-white" />
+              </div>
+              <span className="font-bold text-lg tracking-tight text-slate-900">
+                Cingkrong<span className="text-primary font-black uppercase text-[10px] ml-1 tracking-widest">Lib</span>
               </span>
-            </li>
-            <li className="flex items-center space-x-3">
-              <Phone className="h-5 w-5 text-primary-light flex-shrink-0" />
-              <span>+62 812-3456-7890</span>
-            </li>
-            <li className="flex items-center space-x-3">
-              <Mail className="h-5 w-5 text-primary-light flex-shrink-0" />
-              <span>perpus.cingkrong@example.com</span>
-            </li>
-          </ul>
+            </div>
+            <p className="text-slate-500 text-sm leading-relaxed max-w-sm">
+              Membangun masyarakat yang cerdas dan berwawasan luas melalui akses
+              literasi digital yang inklusif dan berkualitas tinggi untuk seluruh warga desa.
+            </p>
+          </div>
+
+          {/* Contact Section */}
+          <div className="md:col-span-4 space-y-6">
+            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Informasi Kontak</h4>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-4">
+                <MapPin className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
+                <span className="text-sm text-slate-600 leading-snug font-medium">
+                  Jl. Raya Purwodadi - Solo KM 5, Desa Cingkrong, Kec. Purwodadi, Grobogan
+                </span>
+              </li>
+              <li className="flex items-center gap-4">
+                <Phone className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-sm text-slate-600 font-medium">+62 812-3456-7890</span>
+              </li>
+              <li className="flex items-center gap-4">
+                <Mail className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-sm text-slate-600 font-medium">perpus.cingkrong@mail.id</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Hours Section */}
+          <div className="md:col-span-3 space-y-6">
+            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Waktu Layanan</h4>
+            <ul className="space-y-3">
+              <li className="flex justify-between items-center text-sm border-b border-slate-50 pb-2">
+                <span className="text-slate-500 font-medium">Sen - Kam</span>
+                <span className="text-slate-800 font-bold tracking-tight">08:00 — 16:00</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-slate-50 pb-2">
+                <span className="text-slate-500 font-medium">Jumat</span>
+                <span className="text-slate-800 font-bold tracking-tight">08:00 — 11:00</span>
+              </li>
+              <li className="flex justify-between items-center text-sm border-b border-slate-50 pb-2">
+                <span className="text-slate-500 font-medium">Sabtu</span>
+                <span className="text-slate-800 font-bold tracking-tight">08:00 — 13:00</span>
+              </li>
+              <li className="flex justify-between items-center text-sm pt-1">
+                <span className="text-slate-400 font-medium italic">Minggu</span>
+                <span className="text-accent font-black text-[10px] uppercase tracking-widest">Tutup</span>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <div>
-          <h4 className="text-lg font-bold text-white mb-4">Jam Buka</h4>
-          <ul className="space-y-2">
-            <li className="flex justify-between border-b border-secondary-DEFAULT pb-1">
-              <span>Senin - Kamis</span>
-              <span className="font-semibold">08:00 - 16:00</span>
-            </li>
-            <li className="flex justify-between border-b border-secondary-DEFAULT pb-1">
-              <span>Jumat</span>
-              <span className="font-semibold">08:00 - 11:00</span>
-            </li>
-            <li className="flex justify-between border-b border-secondary-DEFAULT pb-1">
-              <span>Sabtu</span>
-              <span className="font-semibold">08:00 - 13:00</span>
-            </li>
-            <li className="flex justify-between text-secondary-light pt-1">
-              <span>Minggu & Hari Libur</span>
-              <span>Tutup</span>
-            </li>
-          </ul>
+        {/* Copyright */}
+        <div className="border-t border-slate-50 mt-20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-[10px] font-black text-slate-300 uppercase tracking-[0.2em]">
+            &copy; {new Date().getFullYear()} Cingkrong Digital Library
+          </p>
+          <div className="flex gap-6">
+            <a href="#" className="text-[10px] font-black text-slate-400 hover:text-primary uppercase tracking-widest transition-colors">Privacy</a>
+            <a href="#" className="text-[10px] font-black text-slate-400 hover:text-primary uppercase tracking-widest transition-colors">Terms</a>
+          </div>
         </div>
-      </div>
-      <div className="border-t border-secondary-DEFAULT mt-8 pt-8 text-center text-sm">
-        <p>
-          &copy; {new Date().getFullYear()} Perpustakaan Desa Cingkrong. Hak
-          Cipta Dilindungi.
-        </p>
       </div>
     </footer>
   );

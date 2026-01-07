@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Lock, Mail, ArrowRight, Info, AlertCircle, KeyRound } from "lucide-react";
+import { Lock, Mail, ArrowRight, Info, AlertCircle, KeyRound, Sparkles } from "lucide-react";
 import { useData } from "../context/DataContext";
 import { supabase } from "../lib/supabase";
 import { motion } from "framer-motion";
@@ -32,8 +32,6 @@ export default function Login() {
           .select("*")
           .eq("id", data.user.id)
           .single();
-
-        if (profileError) console.error("Profile missing:", profileError);
 
         const userRole = profile?.role || "member";
         const userName = profile?.name || data.user.email;
@@ -70,50 +68,52 @@ export default function Login() {
     }
   };
 
-  const inputClass = "w-full pl-12 pr-4 py-3 bg-background border border-white/10 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition text-white placeholder:text-stone-500";
+  const inputClass = "w-full pl-10 py-3 bg-transparent border-b border-slate-200 focus:border-primary outline-none transition-all text-slate-700 font-medium placeholder:text-slate-300";
+  const labelClass = "text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1";
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center px-6 relative overflow-hidden">
-      {/* Background Decorative Blurs */}
-      <div className="absolute top-1/4 -left-20 w-80 h-80 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-accent/5 blur-[120px] rounded-full pointer-events-none" />
+    <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center px-6 relative overflow-hidden">
+      {/* Decorative Light Blurs */}
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/5 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-500/5 blur-[100px] rounded-full pointer-events-none" />
 
       <motion.div 
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
         className="max-w-md w-full"
       >
-        {/* Logo/Header Area */}
-        <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-6 group">
-            <div className="bg-primary p-2 rounded-lg group-hover:rotate-12 transition-transform">
-              <KeyRound className="text-white h-6 w-6" />
+        {/* Branding Area */}
+        <div className="text-center mb-10">
+          <Link to="/" className="inline-flex items-center gap-3 mb-6 group">
+            <div className="bg-primary p-2 rounded-xl group-hover:rotate-12 transition-transform shadow-lg shadow-primary/20">
+              <KeyRound className="text-white h-5 w-5" />
             </div>
-            <span className="font-serif font-bold text-2xl text-white">Desa<span className="text-primary-light">Cingkrong</span></span>
+            <span className="font-bold text-2xl tracking-tight text-slate-900">
+              Cingkrong<span className="text-primary font-black uppercase text-[10px] ml-1 tracking-widest">Lib</span>
+            </span>
           </Link>
-          <h2 className="text-3xl font-bold text-white mb-2">Selamat Datang</h2>
-          <p className="text-stone-400">Masuk untuk mengelola pinjaman buku Anda</p>
+          <h2 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">Selamat Datang</h2>
+          <p className="text-slate-500 font-medium italic text-sm">Masuk untuk mengelola literasi Anda</p>
         </div>
 
-        <div className="bg-surface border border-white/10 p-8 rounded-[2rem] shadow-2xl relative">
-          <form onSubmit={handleLogin} className="space-y-6">
+        <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-white relative">
+          <form onSubmit={handleLogin} className="space-y-8">
             {error && (
               <motion.div 
-                initial={{ x: -10 }} 
-                animate={{ x: 0 }}
-                className="bg-accent/10 border border-accent/20 text-accent-light p-4 rounded-xl text-sm flex items-start gap-3"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-accent/5 border border-accent/10 text-accent p-4 rounded-xl text-[11px] font-bold uppercase tracking-widest flex items-center gap-3"
               >
-                <AlertCircle className="shrink-0 mt-0.5" size={18} />
+                <AlertCircle size={16} />
                 <span>{error}</span>
               </motion.div>
             )}
 
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-widest text-zinc-200 ml-1">
-                Alamat Email
-              </label>
+            <div className="space-y-1">
+              <label className={labelClass}>Alamat Email</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-light h-5 w-5" />
+                <Mail className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
                 <input
                   type="email"
                   required
@@ -125,17 +125,12 @@ export default function Login() {
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-bold uppercase tracking-widest text-zinc-200 ml-1">
-                  Kata Sandi
-                </label>
-                <Link to="/reset-password" className="text-[10px] font-bold text-primary-light hover:underline uppercase tracking-wider">
-                  Lupa Sandi?
-                </Link>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center mb-1">
+                <label className={labelClass}>Kata Sandi</label>
               </div>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-light h-5 w-5" />
+                <Lock className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-300" size={18} />
                 <input
                   type="password"
                   required
@@ -145,32 +140,34 @@ export default function Login() {
                   placeholder="••••••••"
                 />
               </div>
+              <div className="flex justify-end pt-4">
+                <Link to="/reset-password" className="text-[10px] font-bold text-primary hover:text-primary-dark uppercase tracking-widest transition-colors">
+                  Lupa password?
+                </Link>
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full py-4 bg-primary hover:bg-primary-dark text-white font-black rounded-xl shadow-xl shadow-primary/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 group ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className={`w-full py-4 bg-primary hover:bg-primary-dark text-white text-[11px] font-black uppercase tracking-[0.2em] rounded-2xl shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-3 group ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              {isLoading ? "Memproses..." : "Masuk ke Akun"}
-              {!isLoading && <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />}
+              {isLoading ? "Otentikasi..." : "Masuk ke Akun"}
+              {!isLoading && <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />}
             </button>
           </form>
 
-          <div className="mt-8 pt-8 border-t border-white/5 flex flex-col items-center gap-4">
-            <p className="text-stone-400 text-sm">
+          <div className="mt-10 pt-8 border-t border-slate-50 flex flex-col items-center gap-6">
+            <p className="text-slate-400 text-xs font-medium">
               Belum memiliki akun?{" "}
-              <Link
-                to="/daftar"
-                className="text-primary-light font-bold hover:underline"
-              >
-                Daftar Gratis
+              <Link to="/daftar" className="text-primary font-bold hover:underline underline-offset-4">
+                Daftar Sekarang
               </Link>
             </p>
             
-            <div className="flex items-center gap-2 text-[11px] text-stone-500 bg-background/50 px-3 py-1 rounded-full border border-white/5">
-              <Info size={12} />
-              <span>Gunakan akun terdaftar di Desa Cingkrong</span>
+            <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-full border border-slate-100">
+              <Sparkles size={12} className="text-primary" />
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Akses Desa Cingkrong</span>
             </div>
           </div>
         </div>

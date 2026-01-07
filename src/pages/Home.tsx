@@ -1,4 +1,4 @@
-import { ArrowRight, Book, Users, Clock, Sparkles, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Book, Users, Clock, Sparkles, CheckCircle2, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -6,172 +6,161 @@ export default function Home() {
   const userSession = JSON.parse(localStorage.getItem("userSession") || "null");
 
   return (
-    <div className="flex flex-col bg-background min-h-screen text-white/90">
-      {/* Hero Section */}
-      <section className="relative min-h-[85vh] flex items-center overflow-hidden">
-        {/* Background Elements */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-background via-secondary/80 to-transparent z-10" />
-          <img 
-            src="https://images.unsplash.com/photo-1507842217121-9e691b2d0941?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80" 
-            className="w-full h-full object-cover opacity-40"
-            alt="Library Background"
-          />
-        </div>
+    <div className="flex flex-col bg-white min-h-screen text-slate-900 overflow-x-hidden">
+      {/* Hero Section - Clean & Airy */}
+      <section className="relative min-h-[90vh] flex items-center bg-[#F8FAFC]">
+        {/* Subtle Decorative Element */}
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/5 -skew-x-12 transform origin-top translate-x-20 hidden lg:block" />
+        
+        <div className="container mx-auto px-6 relative z-10">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="flex-1 max-w-3xl"
+            >
+              <div className="inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-slate-200 mb-8">
+                <Sparkles size={16} className="text-primary" />
+                <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">Literasi Desa Digital</span>
+              </div>
+              
+              <h1 className="text-5xl md:text-7xl font-bold text-slate-900 leading-[1.1] tracking-tight mb-8">
+                Akses Ilmu <br />
+                <span className="text-primary">Tanpa Batas</span>
+              </h1>
+              
+              <p className="text-lg text-slate-500 mb-10 leading-relaxed max-w-xl">
+                Platform perpustakaan digital Desa Cingkrong yang memudahkan warga mengakses koleksi buku, riset, dan literatur dari mana saja.
+              </p>
 
-        <div className="container mx-auto px-6 relative z-20">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-4xl"
-          >
-            <div className="inline-flex items-center space-x-2 bg-primary/20 text-primary-light px-4 py-1.5 rounded-full text-sm font-bold mb-6 border border-primary/30">
-              <Sparkles size={16} />
-              <span>Pusat Literasi Digital Cingkrong</span>
-            </div>
-            
-            <h1 className="text-5xl md:text-7xl font-bold font-serif mb-6 leading-[1.1]">
-              Temukan Dunia di <br />
-              <span className="text-primary-light relative">
-                Genggaman Anda
-                <svg className="absolute -bottom-2 left-0 w-full h-2 text-accent/40" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 25 0 50 5 T 100 5" stroke="currentColor" strokeWidth="2" fill="none" /></svg>
-              </span>
-            </h1>
-            
-            <p className="text-lg md:text-xl text-stone-300 mb-10 leading-relaxed max-w-2xl">
-              Akses ribuan koleksi buku, jurnal, dan karya ilmiah untuk membangun masa depan Desa Cingkrong yang lebih cerdas dan inovatif.
-            </p>
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  to="/katalog"
+                  className="flex items-center justify-center px-8 py-4 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl transition-all shadow-lg shadow-primary/20"
+                >
+                  Jelajahi Katalog
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+                <Link
+                  to={userSession ? "/profile" : "/daftar"}
+                  className="flex items-center justify-center px-8 py-4 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-xl border border-slate-200 transition-all shadow-sm"
+                >
+                  {userSession ? "Dashboard Saya" : "Daftar Anggota"}
+                </Link>
+              </div>
+            </motion.div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/katalog"
-                className="group flex items-center justify-center px-8 py-4 bg-primary hover:bg-primary-dark text-white font-bold rounded-xl transition-all duration-300 shadow-xl shadow-primary/20"
-              >
-                <Book className="mr-2 h-5 w-5" />
-                Jelajahi Katalog
-                <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition" />
-              </Link>
-              <Link
-                to={userSession ? "/profile" : "/daftar"}
-                className="flex items-center justify-center px-8 py-4 bg-surface hover:bg-white/10 border border-white/20 text-white font-bold rounded-xl transition-all"
-              >
-                <Users className="mr-2 h-5 w-5" />
-                {userSession ? "Dashboard Anggota" : "Gabung Anggota"}
-              </Link>
-            </div>
-          </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="flex-1 relative hidden lg:block"
+            >
+              <div className="relative z-10 rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white">
+                <img 
+                  src="https://images.unsplash.com/photo-1481627526689-510ef0475661?auto=format&fit=crop&q=80&w=1000" 
+                  className="w-full h-[600px] object-cover"
+                  alt="Library"
+                />
+              </div>
+              <div className="absolute -bottom-10 -left-10 bg-white p-8 rounded-3xl shadow-xl border border-slate-100 max-w-[280px] z-20">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="p-3 bg-emerald-50 rounded-2xl text-emerald-600">
+                    <CheckCircle2 size={24} />
+                  </div>
+                  <span className="font-bold text-slate-800 tracking-tight">Proses Cepat & Mudah</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">Pinjam buku secara daring dan ambil langsung di perpustakaan desa.</p>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Info Cards - Floating on Dark Background */}
-      <section className="relative z-30 px-6 -mt-20">
-        <div className="container mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Stats/Features - Ultra Clean */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16">
             {[
               {
                 icon: Book,
-                title: "Koleksi Lengkap",
-                desc: "Dari literatur pertanian hingga teknologi terbaru untuk warga.",
-                color: "text-primary-light"
+                title: "Koleksi Beragam",
+                desc: "Mulai dari teknik pertanian modern hingga literatur anak-anak.",
+                accent: "text-primary"
               },
               {
                 icon: Clock,
-                title: "Layanan 24/7",
-                desc: "Akses katalog dan reservasi buku kapan saja secara online.",
-                color: "text-accent-light"
+                title: "Reservasi Online",
+                desc: "Pesan buku kapan saja melalui aplikasi dan pantau status peminjaman.",
+                accent: "text-blue-500"
               },
               {
                 icon: Users,
-                title: "Ruang Komunitas",
-                desc: "Wadah diskusi dan belajar bersama untuk segala usia.",
-                color: "text-primary-light"
+                title: "Komunitas Belajar",
+                desc: "Wadah interaksi antar warga untuk berbagi ilmu dan pengalaman.",
+                accent: "text-emerald-500"
               },
             ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-surface border border-white/10 p-8 rounded-2xl shadow-2xl hover:border-primary/50 transition-colors group"
-              >
-                <div className={`p-3 rounded-xl bg-background w-fit mb-6 group-hover:scale-110 transition-transform`}>
-                  <item.icon className={`h-8 w-8 ${item.color}`} />
+              <div key={index} className="space-y-6">
+                <div className={`${item.accent} mb-4`}>
+                  <item.icon size={32} strokeWidth={1.5} />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-white">
+                <h3 className="text-xl font-bold text-slate-800 tracking-tight">
                   {item.title}
                 </h3>
-                <p className="text-stone-400 text-sm leading-relaxed">
+                <p className="text-slate-500 text-sm leading-relaxed border-l-2 border-slate-100 pl-4">
                   {item.desc}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* About Section - Using Surface Contrast */}
-      <section className="py-32 bg-background relative overflow-hidden">
+      {/* Content Section - Minimalist Contrast */}
+      <section className="py-32 bg-[#F8FAFC]">
         <div className="container mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center gap-20">
-            <div className="lg:w-1/2 relative">
-              <div className="absolute -inset-4 bg-primary/20 blur-3xl rounded-full" />
-              <div className="relative border-2 border-white/10 rounded-3xl overflow-hidden shadow-2xl">
-                <img
-                  src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
-                  alt="Reading"
-                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-700"
-                />
+          <div className="max-w-4xl mx-auto text-center mb-20">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-4">Misi Literasi</h2>
+            <h3 className="text-3xl md:text-4xl font-bold text-slate-900 tracking-tight">Membangun Masa Depan Desa Cingkrong Melalui Pengetahuan</h3>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="p-10 bg-white rounded-[2rem] border border-slate-200 shadow-sm space-y-4">
+              <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-slate-700">
+                <CheckCircle2 size={24} />
               </div>
+              <h4 className="text-xl font-bold text-slate-800">Inklusivitas Digital</h4>
+              <p className="text-slate-500 text-sm leading-relaxed">Kami memastikan setiap warga memiliki akses yang sama terhadap informasi berkualitas tanpa hambatan jarak.</p>
             </div>
-            
-            <div className="lg:w-1/2">
-              <h2 className="text-primary-light font-bold tracking-widest uppercase text-sm mb-4">Visi & Misi Kami</h2>
-              <h3 className="text-4xl font-bold font-serif text-white mb-8 leading-tight">
-                Mencerdaskan Kehidupan Desa <br /> Melalui Literasi Digital
-              </h3>
-              
-              <div className="space-y-6">
-                <div className="bg-surface/50 p-6 rounded-2xl border-l-4 border-primary">
-                  <h4 className="flex items-center font-bold text-xl text-white mb-3">
-                    <CheckCircle2 className="mr-2 text-primary-light" size={20} /> Visi Utama
-                  </h4>
-                  <p className="text-stone-400">
-                    Menjadi pusat ilmu pengetahuan berbasis digital yang inklusif untuk seluruh warga Desa Cingkrong.
-                  </p>
-                </div>
-                
-                <div className="bg-surface/50 p-6 rounded-2xl border-l-4 border-accent">
-                  <h4 className="flex items-center font-bold text-xl text-white mb-3">
-                    <CheckCircle2 className="mr-2 text-accent-light" size={20} /> Misi Strategis
-                  </h4>
-                  <ul className="grid grid-cols-1 gap-3 text-stone-400">
-                    <li className="flex items-start gap-2 italic">"Mempermudah akses informasi dan bahan bacaan berkualitas secara merata."</li>
-                  </ul>
-                </div>
+            <div className="p-10 bg-primary rounded-[2rem] text-white space-y-4 shadow-xl shadow-primary/20">
+              <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-white">
+                <Search size={24} />
               </div>
+              <h4 className="text-xl font-bold">Pencarian Pintar</h4>
+              <p className="text-white/80 text-sm leading-relaxed">Sistem katalog yang memudahkan Anda menemukan judul buku atau topik spesifik dalam hitungan detik.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA Section - Bold Primary */}
-      <section className="py-24 bg-primary relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10" />
-        <div className="container mx-auto px-6 relative z-10 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold font-serif text-white mb-6">
-            Siap Menjadi Bagian dari Perubahan?
-          </h2>
-          <p className="text-white/80 mb-10 max-w-2xl mx-auto text-lg">
-            Daftar sekarang untuk meminjam buku secara online dan pantau riwayat bacaan Anda dengan mudah.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
+      {/* CTA Section - Simple & Focused */}
+      <section className="py-24 bg-white border-t border-slate-100">
+        <div className="container mx-auto px-6 text-center">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-3xl font-bold text-slate-900 mb-6 tracking-tight">
+              Mulai Petualangan Literasi Anda
+            </h2>
+            <p className="text-slate-500 mb-10 text-lg leading-relaxed">
+              Bergabunglah dengan ratusan warga lainnya yang sudah terdaftar. Gratis, cepat, dan bermanfaat.
+            </p>
             <Link
               to={userSession ? "/katalog" : "/daftar"}
-              className="px-10 py-4 bg-background hover:bg-secondary text-white font-bold rounded-xl shadow-2xl transition-all transform hover:scale-105 active:scale-95"
+              className="inline-flex items-center justify-center px-10 py-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition-all active:scale-95"
             >
-              {userSession ? "Cari Buku Sekarang" : "Daftar Gratis"}
+              {userSession ? "Cari Koleksi Buku" : "Daftar Anggota Sekarang"}
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </div>
         </div>

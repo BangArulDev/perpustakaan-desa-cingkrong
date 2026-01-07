@@ -6,7 +6,8 @@ import {
   Settings,
   LogOut,
   Menu,
-  X,
+  ChevronLeft,
+  Library,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -16,89 +17,102 @@ export default function AdminLayout() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Mock logout - clear "auth" token
     localStorage.removeItem("isAdmin");
+    localStorage.removeItem("userSession");
     navigate("/login");
   };
 
   const menuItems = [
     { path: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/admin/books", icon: BookOpen, label: "Kelola Buku" },
-    { path: "/admin/members", icon: Users, label: "Anggota" },
+    { path: "/admin/members", icon: Users, label: "Data Anggota" },
     { path: "/admin/settings", icon: Settings, label: "Pengaturan" },
   ];
 
   return (
-    <div className="flex h-screen bg-stone-100">
+    <div className="flex h-screen bg-[#F8FAFC] text-slate-900">
       {/* Sidebar */}
       <aside
         className={`${
           isSidebarOpen ? "w-64" : "w-20"
-        } bg-secondary text-white transition-all duration-300 flex flex-col fixed md:relative z-30 h-full`}
+        } bg-[#132440] text-white transition-all duration-300 flex flex-col fixed md:relative z-30 h-full shadow-xl`}
       >
-        <div className="p-4 flex items-center justify-between border-b border-white/10 h-16">
-          <span
-            className={`font-serif font-bold text-xl truncate ${
-              !isSidebarOpen && "hidden"
-            }`}
-          >
-            Admin Panel
-          </span>
-          <button
-            onClick={() => setSidebarOpen(!isSidebarOpen)}
-            className="p-1 hover:bg-white/10 rounded"
-          >
-            {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+        {/* Logo Section */}
+        <div className="p-4 flex items-center justify-between h-20 border-b border-white/5">
+          <div className={`flex items-center gap-3 overflow-hidden ${!isSidebarOpen && "justify-center w-full"}`}>
+            <div className="bg-primary p-2 rounded-lg shrink-0">
+              <Library size={20} className="text-white" />
+            </div>
+            {isSidebarOpen && (
+              <span className="font-bold tracking-tight text-lg whitespace-nowrap">
+                Cingkrong<span className="text-primary-light text-xs ml-1 font-normal uppercase tracking-widest">Lib</span>
+              </span>
+            )}
+          </div>
         </div>
 
-        <nav className="flex-1 py-6 space-y-2 px-2">
-          {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center space-x-3 px-3 py-3 rounded-lg transition-colors ${
-                location.pathname === item.path
-                  ? "bg-accent text-secondary font-bold shadow-md"
-                  : "hover:bg-white/10 text-stone-300 hover:text-white"
-              }`}
-            >
-              <item.icon size={20} />
-              {isSidebarOpen && <span>{item.label}</span>}
-            </Link>
-          ))}
+        {/* Navigation */}
+        <nav className="flex-1 py-6 px-3 space-y-1">
+          {menuItems.map((item) => {
+            const isActive = location.pathname === item.path;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`flex items-center gap-3 px-3 py-3 rounded-xl transition-all group ${
+                  isActive
+                    ? "bg-primary text-white shadow-lg shadow-primary/20"
+                    : "text-slate-400 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                <item.icon size={20} className={isActive ? "text-white" : "group-hover:text-primary-light"} />
+                {isSidebarOpen && <span className="font-semibold text-sm">{item.label}</span>}
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="p-4 border-t border-white/10">
+        {/* Sidebar Footer */}
+        <div className="p-4 border-t border-white/5">
           <button
             onClick={handleLogout}
-            className="flex items-center space-x-3 w-full px-3 py-2 text-red-300 hover:bg-red-500/20 hover:text-red-100 rounded-lg transition-colors"
+            className="flex items-center gap-3 w-full px-3 py-3 text-slate-400 hover:text-accent-light hover:bg-accent/10 rounded-xl transition-all group"
           >
             <LogOut size={20} />
-            {isSidebarOpen && <span>Keluar</span>}
+            {isSidebarOpen && <span className="font-semibold text-sm">Keluar Sesi</span>}
           </button>
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white h-16 border-b border-stone-200 flex items-center justify-between px-6 shadow-sm">
-          <h2 className="font-bold text-primary-dark text-lg capitalize">
-            {location.pathname.split("/").pop()}
-          </h2>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold">
-                A
-              </div>
-              <span className="text-sm font-medium text-text-primary">
-                Admin
-              </span>
+        {/* Top Navbar */}
+        <header className="bg-white h-20 border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setSidebarOpen(!isSidebarOpen)}
+              className="p-2 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors"
+            >
+              {isSidebarOpen ? <ChevronLeft size={20} /> : <Menu size={20} />}
+            </button>
+            <h2 className="font-bold text-slate-800 text-lg">
+              {menuItems.find(i => i.path === location.pathname)?.label || "Sistem Informasi"}
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex flex-col items-end mr-2">
+              <span className="text-sm font-bold text-slate-800 leading-none">Administrator</span>
+              <span className="text-[10px] text-primary font-bold uppercase tracking-widest mt-1">Super User</span>
+            </div>
+            <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-primary font-bold shadow-sm">
+              AD
             </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-6">
+        {/* Viewport */}
+        <main className="flex-1 overflow-auto p-8 custom-scrollbar">
           <Outlet />
         </main>
       </div>

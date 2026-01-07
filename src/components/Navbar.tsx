@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, BookOpen, LogOut, User, LayoutDashboard } from "lucide-react";
+import { Menu, X, BookOpen, LogOut, User, LayoutDashboard, ChevronRight } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,9 +10,8 @@ export default function Navbar() {
 
   const userSession = JSON.parse(localStorage.getItem("userSession") || "null");
 
-  // Effect untuk shadow saat scroll
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -29,74 +28,76 @@ export default function Navbar() {
     ...(!userSession ? [{ name: "Daftar Anggota", path: "/daftar" }] : []),
   ];
 
-  const activeLink = (path: string) => 
-    location.pathname === path ? "text-primary-light" : "text-white/90 hover:text-primary-light";
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <nav 
       className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-secondary shadow-xl py-2" : "bg-background border-b border-white/10 py-4"
+        scrolled 
+          ? "bg-white/80 backdrop-blur-md border-b border-slate-100 py-3" 
+          : "bg-white border-b border-transparent py-5"
       }`}
     >
       <div className="container mx-auto px-6">
         <div className="flex justify-between items-center">
-          {/* Logo Section */}
-          <Link
-            to="/"
-            className="flex items-center space-x-3 group"
-          >
-            <div className="bg-primary p-2 rounded-lg group-hover:bg-primary-dark transition-colors">
-              <BookOpen className="h-6 w-6 text-white" />
+          {/* Logo Section - Ultra Clean */}
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="bg-primary p-2 rounded-xl group-hover:scale-105 transition-transform">
+              <BookOpen className="h-5 w-5 text-white" />
             </div>
-            <span className="font-serif font-bold text-2xl tracking-tight text-white">
-              Desa<span className="text-primary-light ml-1">Cingkrong</span>
+            <span className="font-bold text-xl tracking-tight text-slate-900">
+              Cingkrong<span className="text-primary font-black uppercase text-[10px] ml-1 tracking-widest">Lib</span>
             </span>
           </Link>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-10">
-            <div className="flex items-center space-x-8">
+          <div className="hidden md:flex items-center gap-10">
+            <div className="flex items-center gap-8">
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
-                  className={`${activeLink(link.path)} font-medium transition duration-200 text-sm tracking-wide uppercase`}
+                  className={`text-[11px] font-black uppercase tracking-[0.2em] transition-colors ${
+                    isActive(link.path) ? "text-primary" : "text-slate-400 hover:text-slate-900"
+                  }`}
                 >
                   {link.name}
                 </Link>
               ))}
             </div>
 
-            <div className="flex items-center pl-8 border-l border-white/10 space-x-4">
+            <div className="flex items-center pl-8 border-l border-slate-100 gap-6">
               {userSession ? (
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center gap-4">
                   <div className="flex flex-col items-end">
-                    <span className="text-xs text-white/60 font-medium">Selamat Datang,</span>
-                    <span className="text-sm font-bold text-primary-light capitalize">{userSession.name}</span>
+                    <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest leading-none">Anggota</span>
+                    <span className="text-sm font-bold text-slate-700">{userSession.name}</span>
                   </div>
                   
-                  {userSession.role === "admin" && (
-                    <Link
-                      to="/admin"
-                      className="p-2 bg-surface hover:bg-primary transition rounded-full text-white"
-                      title="Panel Admin"
+                  <div className="flex items-center gap-2">
+                    {userSession.role === "admin" && (
+                      <Link
+                        to="/admin"
+                        className="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
+                        title="Panel Admin"
+                      >
+                        <LayoutDashboard size={18} />
+                      </Link>
+                    )}
+                    
+                    <button
+                      onClick={handleLogout}
+                      className="p-2 text-slate-400 hover:text-accent hover:bg-accent/5 rounded-lg transition-all"
+                      title="Keluar Sesi"
                     >
-                      <LayoutDashboard size={18} />
-                    </Link>
-                  )}
-                  
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 bg-accent hover:bg-accent-dark text-white px-4 py-2 rounded-lg text-sm font-bold transition shadow-lg active:scale-95"
-                  >
-                    <LogOut size={16} />
-                    Keluar
-                  </button>
+                      <LogOut size={18} />
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <Link
                   to="/login"
-                  className="bg-primary hover:bg-primary-dark text-white px-8 py-2.5 rounded-full font-bold transition duration-300 shadow-md hover:shadow-primary/20 transform hover:-translate-y-0.5"
+                  className="bg-slate-900 hover:bg-slate-800 text-white px-7 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-slate-200"
                 >
                   Masuk
                 </Link>
@@ -107,48 +108,53 @@ export default function Navbar() {
           {/* Mobile Button */}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden text-white p-2 hover:bg-white/10 rounded-lg transition"
+            className="md:hidden text-slate-900 p-2 hover:bg-slate-50 rounded-xl transition"
           >
-            {isOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
+            {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu - Minimalist Slide */}
       <div 
-        className={`md:hidden absolute w-full bg-secondary border-t border-white/5 transition-all duration-300 ease-in-out ${
-          isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4 pointer-events-none"
+        className={`md:hidden absolute w-full bg-white border-b border-slate-100 transition-all duration-300 ease-in-out overflow-hidden ${
+          isOpen ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <div className="flex flex-col p-6 space-y-4">
+        <div className="flex flex-col p-6 gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className={`text-lg font-medium py-2 ${location.pathname === link.path ? 'text-primary-light' : 'text-white'}`}
+              className={`text-sm font-black uppercase tracking-widest flex justify-between items-center ${
+                isActive(link.path) ? 'text-primary' : 'text-slate-500'
+              }`}
               onClick={() => setIsOpen(false)}
             >
               {link.name}
+              <ChevronRight size={14} className={isActive(link.path) ? "opacity-100" : "opacity-0"} />
             </Link>
           ))}
-          <hr className="border-white/10" />
+          <div className="h-[1px] bg-slate-50 w-full" />
           {userSession ? (
-            <div className="space-y-4 pt-2">
-              <div className="flex items-center space-x-3 text-primary-light">
-                <User size={20} />
-                <span className="font-bold">{userSession.name}</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 text-xs">
+                  {userSession.name.charAt(0)}
+                </div>
+                <span className="font-bold text-slate-800">{userSession.name}</span>
               </div>
               <button
                 onClick={handleLogout}
-                className="w-full bg-accent py-3 rounded-xl font-bold text-white flex items-center justify-center gap-2"
+                className="text-accent font-black text-[10px] uppercase tracking-widest"
               >
-                <LogOut size={18} /> Keluar
+                Logout
               </button>
             </div>
           ) : (
             <Link
               to="/login"
-              className="w-full bg-primary py-3 rounded-xl font-bold text-white text-center"
+              className="w-full bg-primary py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] text-white text-center shadow-lg shadow-primary/20"
               onClick={() => setIsOpen(false)}
             >
               Masuk ke Akun
